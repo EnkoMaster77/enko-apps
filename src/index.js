@@ -1,10 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App"; // <-- เรียกไฟล์ App.js ที่คุณสร้าง
+import "./index.css";
 
-function App() {
-  return <h1>Welcome to ENKO Starter App</h1>;
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
