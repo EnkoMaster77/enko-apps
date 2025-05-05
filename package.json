@@ -5,10 +5,11 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "serve": "^14.2.0"
+    "serve": "^14.2.0",
+    "vite": "^4.5.0"
   },
   "scripts": {
     "start": "serve -s build",
-    "build": "echo Skipping build for starter; replace with real build later"
+    "build": "vite build"
   }
 }
