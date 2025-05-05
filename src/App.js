@@ -1,69 +1,103 @@
-// นำเข้า React และ useEffect/useState
 import React, { useEffect, useState } from 'react';
-
-// นำเข้าการเชื่อมต่อ Firebase ที่เราสร้างไว้ใน firebase.js
 import { db } from './firebase';
-
-// นำเข้าฟังก์ชัน Firestore ที่ใช้ดึงข้อมูล
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 
 function App() {
-  // ตัวแปรเก็บรายการวัสดุจาก Firestore
   const [materials, setMaterials] = useState([]);
+  const [newMaterial, setNewMaterial] = useState({ name: '', buy: '', sell: '' });
 
-  // โหลดข้อมูลจาก Firestore ตอนเปิดหน้าเว็บ
+  // โหลดข้อมูลจาก Firebase
+  const fetchMaterials = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'materials'));
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setMaterials(data);
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาด:', error);
+    }
+  };
+
+  // เพิ่มข้อมูลเข้า Firestore
+  const handleAdd = async () => {
+    const { name, buy, sell } = newMaterial;
+    if (!name || !buy || !sell) {
+      alert('กรุณากรอกให้ครบทุกช่อง');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, 'materials'), {
+        name,
+        buy,
+        sell,
+      });
+      setNewMaterial({ name: '', buy: '', sell: '' });
+      fetchMaterials();
+    } catch (error) {
+      console.error('ไม่สามารถเพิ่มข้อมูล:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // ดึงข้อมูลทั้งหมดจาก collection ชื่อ 'materials'
-        const querySnapshot = await getDocs(collection(db, 'materials'));
-
-        // สร้าง array ของรายการวัสดุจาก document ที่ได้
-        const items = querySnapshot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(), // รวม name, buy, sell เข้ามา
-          };
-        });
-
-        // บันทึกลง state
-        setMaterials(items);
-      } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
-      }
-    };
-
-    fetchData();
+    fetchMaterials();
   }, []);
 
-  return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h2 style={{ textAlign: 'center' }}>📋 ENKO - ระบบบันทึกราคาวัสดุ</h2>
+  // ฟังก์ชันคำนวณกำไร
+  const getProfit = (buy, sell) => {
+    const b = parseFloat(buy);
+    const s = parseFloat(sell);
+    const diff = s - b;
+    const percent = ((diff / b) * 100).toFixed(1);
+    return {
+      text: `${diff.toFixed(2)} บาท (${percent}%)`,
+      color: diff >= 0 ? 'green' : 'red',
+    };
+  };
 
-      {/* ตารางแสดงข้อมูลวัสดุ */}
-      <table width="100%" border="1" cellPadding="8" style={{ borderCollapse: 'collapse', marginTop: '1rem' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f2f2f2' }}>
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h2>📦 ENKO - ระบบบันทึกราคาวัสดุ</h2>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <input
+          placeholder="ชื่อวัสดุ เช่น เหล็กบาง"
+          value={newMaterial.name}
+          onChange={(e) => setNewMaterial({ ...newMaterial, name: e.target.value })}
+        />
+        <input
+          placeholder="ราคาซื้อ"
+          value={newMaterial.buy}
+          onChange={(e) => setNewMaterial({ ...newMaterial, buy: e.target.value })}
+        />
+        <input
+          placeholder="ราคาขาย"
+          value={newMaterial.sell}
+          onChange={(e) => setNewMaterial({ ...newMaterial, sell: e.target.value })}
+        />
+        <button onClick={handleAdd}>➕ เพิ่ม</button>
+      </div>
+
+      <table border="1" cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead style={{ backgroundColor: '#f0f0f0' }}>
+          <tr>
             <th>ชื่อวัสดุ</th>
-            <th>ราคาซื้อ (บาท/กก.)</th>
-            <th>ราคาขาย (บาท/กก.)</th>
+            <th>ราคาซื้อ</th>
+            <th>ราคาขาย</th>
             <th>กำไร/ขาดทุน</th>
           </tr>
         </thead>
         <tbody>
           {materials.map((item) => {
-            const buy = parseFloat(item.buy);
-            const sell = parseFloat(item.sell);
-            const profit = sell - buy;
-            const profitText = profit >= 0 ? `+${profit.toFixed(2)}` : `-${Math.abs(profit).toFixed(2)}`;
-            const color = profit >= 0 ? 'green' : 'red';
-
+            const profit = getProfit(item.buy, item.sell);
             return (
               <tr key={item.id}>
                 <td>{item.name}</td>
-                <td>{buy.toFixed(2)}</td>
-                <td>{sell.toFixed(2)}</td>
-                <td style={{ color }}>{profitText} บาท</td>
+                <td>{item.buy}</td>
+                <td>{item.sell}</td>
+                <td style={{ color: profit.color }}>{profit.text}</td>
               </tr>
             );
           })}
