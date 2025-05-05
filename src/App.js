@@ -1,63 +1,72 @@
-import { useState } from "react";
+// นำเข้า React และ useEffect/useState
+import React, { useEffect, useState } from 'react';
+
+// นำเข้าการเชื่อมต่อ Firebase ที่เราสร้างไว้ใน firebase.js
+import { db } from './firebase';
+
+// นำเข้าฟังก์ชัน Firestore ที่ใช้ดึงข้อมูล
+import { collection, getDocs } from 'firebase/firestore';
 
 function App() {
+  // ตัวแปรเก็บรายการวัสดุจาก Firestore
   const [materials, setMaterials] = useState([]);
-  const [newMaterial, setNewMaterial] = useState({ name: "", buy: "", sell: "" });
 
-  const addMaterial = () => {
-    if (newMaterial.name && newMaterial.buy && newMaterial.sell) {
-      setMaterials([...materials, newMaterial]);
-      setNewMaterial({ name: "", buy: "", sell: "" });
-    }
-  };
+  // โหลดข้อมูลจาก Firestore ตอนเปิดหน้าเว็บ
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // ดึงข้อมูลทั้งหมดจาก collection ชื่อ 'materials'
+        const querySnapshot = await getDocs(collection(db, 'materials'));
 
-  const calculateProfit = (buy, sell) => {
-    const profit = parseFloat(sell) - parseFloat(buy);
-    const percent = (profit / parseFloat(buy)) * 100;
-    return `${profit.toFixed(2)} บาท (${percent.toFixed(1)}%)`;
-  };
+        // สร้าง array ของรายการวัสดุจาก document ที่ได้
+        const items = querySnapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(), // รวม name, buy, sell เข้ามา
+          };
+        });
+
+        // บันทึกลง state
+        setMaterials(items);
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <div style={{ padding: 30 }}>
-      <h1 style={{ fontSize: 24, fontWeight: "bold" }}>📦 ENKO - ระบบบันทึกราคาวัสดุ</h1>
+    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h2 style={{ textAlign: 'center' }}>📋 ENKO - ระบบบันทึกราคาวัสดุ</h2>
 
-      <div style={{ marginTop: 30, display: "flex", gap: 10 }}>
-        <input
-          placeholder="ชื่อวัสดุ เช่น เหล็กบาง"
-          value={newMaterial.name}
-          onChange={(e) => setNewMaterial({ ...newMaterial, name: e.target.value })}
-        />
-        <input
-          placeholder="ราคาซื้อ (บาท/กก.)"
-          value={newMaterial.buy}
-          onChange={(e) => setNewMaterial({ ...newMaterial, buy: e.target.value })}
-        />
-        <input
-          placeholder="ราคาขาย (บาท/กก.)"
-          value={newMaterial.sell}
-          onChange={(e) => setNewMaterial({ ...newMaterial, sell: e.target.value })}
-        />
-        <button onClick={addMaterial}>➕ เพิ่ม</button>
-      </div>
-
-      <table border="1" style={{ marginTop: 30, width: "100%", borderCollapse: "collapse" }}>
+      {/* ตารางแสดงข้อมูลวัสดุ */}
+      <table width="100%" border="1" cellPadding="8" style={{ borderCollapse: 'collapse', marginTop: '1rem' }}>
         <thead>
-          <tr>
+          <tr style={{ backgroundColor: '#f2f2f2' }}>
             <th>ชื่อวัสดุ</th>
-            <th>ราคาซื้อ</th>
-            <th>ราคาขาย</th>
+            <th>ราคาซื้อ (บาท/กก.)</th>
+            <th>ราคาขาย (บาท/กก.)</th>
             <th>กำไร/ขาดทุน</th>
           </tr>
         </thead>
         <tbody>
-          {materials.map((m, i) => (
-            <tr key={i}>
-              <td>{m.name}</td>
-              <td>{m.buy} บาท</td>
-              <td>{m.sell} บาท</td>
-              <td>{calculateProfit(m.buy, m.sell)}</td>
-            </tr>
-          ))}
+          {materials.map((item) => {
+            const buy = parseFloat(item.buy);
+            const sell = parseFloat(item.sell);
+            const profit = sell - buy;
+            const profitText = profit >= 0 ? `+${profit.toFixed(2)}` : `-${Math.abs(profit).toFixed(2)}`;
+            const color = profit >= 0 ? 'green' : 'red';
+
+            return (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{buy.toFixed(2)}</td>
+                <td>{sell.toFixed(2)}</td>
+                <td style={{ color }}>{profitText} บาท</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
