@@ -1,24 +1,34 @@
-// src/pages/Dashboard.jsx
+// src/components/MaterialTable.jsx
 import React from 'react';
-import SummaryCards from '../components/SummaryCards';
-import MaterialForm from '../components/MaterialForm';
-import MaterialTable from '../components/MaterialTable';
 
-export default function Dashboard({ materials, form, setForm, handleAdd, fetchMaterials }) {
+export default function MaterialTable({ materials = [], fetchMaterials }) {
+  if (!Array.isArray(materials) || materials.length === 0) {
+    return <p className="text-gray-500">ยังไม่มีข้อมูลวัสดุ</p>;
+  }
+
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold text-gray-800">📦 ระบบภาพรวมวัสดุ (ENKO)</h1>
-
-      {/* สรุปข้อมูลแบบ Card */}
-      <SummaryCards materials={materials} />
-
-      {/* ฟอร์มเพิ่มข้อมูล */}
-      <MaterialForm form={form} setForm={setForm} handleAdd={handleAdd} />
-
-      {/* ตารางวัสดุทั้งหมด พร้อมปุ่มลบ */}
-      <MaterialTable materials={materials} fetchMaterials={fetchMaterials} />
-    </div>
+    <table className="w-full mt-4 border text-sm">
+      <thead className="bg-gray-200">
+        <tr>
+          <th className="p-2 border">ชื่อวัสดุ</th>
+          <th className="p-2 border">ราคาซื้อ</th>
+          <th className="p-2 border">ราคาขาย</th>
+          <th className="p-2 border">กำไร/กก.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {materials.map((mat) => (
+          <tr key={mat.id} className="hover:bg-gray-50">
+            <td className="p-2 border">{mat.name || '-'}</td>
+            <td className="p-2 border">฿{mat.buy}</td>
+            <td className="p-2 border">฿{mat.sell}</td>
+            <td className="p-2 border">฿{(mat.sell - mat.buy).toFixed(2)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
+
 
 
