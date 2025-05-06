@@ -1,7 +1,20 @@
 // src/components/MaterialTable.jsx
 import React from 'react';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
-export default function MaterialTable({ materials }) {
+export default function MaterialTable({ materials, fetchMaterials }) {
+  const handleDelete = async (id) => {
+    const confirm = window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?');
+    if (!confirm) return;
+    try {
+      await deleteDoc(doc(db, 'materials', id));
+      fetchMaterials();
+    } catch (error) {
+      console.error('Error deleting material:', error);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded shadow border">
       <h2 className="text-lg font-bold mb-4">📋 ตารางวัสดุทั้งหมด</h2>
@@ -13,6 +26,7 @@ export default function MaterialTable({ materials }) {
               <th className="p-2 border">ราคาซื้อ</th>
               <th className="p-2 border">ราคาขาย</th>
               <th className="p-2 border">กำไร/กก.</th>
+              <th className="p-2 border">จัดการ</th>
             </tr>
           </thead>
           <tbody>
@@ -24,11 +38,19 @@ export default function MaterialTable({ materials }) {
                 <td className="p-2 border text-green-600 font-semibold">
                   ฿ {(mat.sell - mat.buy).toFixed(2)}
                 </td>
+                <td className="p-2 border">
+                  <button
+                    onClick={() => handleDelete(mat.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    ลบ
+                  </button>
+                </td>
               </tr>
             ))}
             {materials.length === 0 && (
               <tr>
-                <td colSpan="4" className="text-center p-4 text-gray-400">
+                <td colSpan="5" className="text-center p-4 text-gray-400">
                   ไม่มีข้อมูลวัสดุ
                 </td>
               </tr>
