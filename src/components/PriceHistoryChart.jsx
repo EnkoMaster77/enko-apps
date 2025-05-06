@@ -1,32 +1,31 @@
-// src/components/PriceHistoryChart.jsx
+// src/components/MaterialChart.jsx
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Mock data: ควรเปลี่ยนเป็นข้อมูลจริงจาก Firebase ในอนาคต
-const mockData = [
-  { date: '01 พ.ค.', price: 12.3 },
-  { date: '02 พ.ค.', price: 12.5 },
-  { date: '03 พ.ค.', price: 12.4 },
-  { date: '04 พ.ค.', price: 12.8 },
-  { date: '05 พ.ค.', price: 13.0 },
-  { date: '06 พ.ค.', price: 13.4 },
-  { date: '07 พ.ค.', price: 13.2 },
-];
+export default function MaterialChart({ materials }) {
+  // แปลงข้อมูลให้อยู่ในรูปแบบสำหรับกราฟ (เช่นเรียงตามชื่อหรือแนวโน้มราคา)
+  const chartData = materials.map((mat, index) => ({
+    name: mat.name,
+    buy: parseFloat(mat.buy),
+    sell: parseFloat(mat.sell),
+    index: index + 1
+  }));
 
-export default function PriceHistoryChart({ materialName = "ทองแดง" }) {
   return (
-    <div className="bg-white p-4 rounded shadow border">
-      <h2 className="text-lg font-bold mb-4">📈 ราคาย้อนหลัง 7 วัน ({materialName})</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 border border-gray-200 dark:border-gray-700 mt-6">
+      <h2 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">📈 แนวโน้มราคาซื้อ-ขาย (เรียงตามลำดับที่เพิ่ม)</h2>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={mockData}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis domain={['auto', 'auto']} />
-          <Tooltip formatter={(value) => `฿ ${value}`} />
-          <Line type="monotone" dataKey="price" stroke="#2563eb" strokeWidth={2} />
+          <XAxis dataKey="index" tickFormatter={(val) => chartData[val - 1]?.name || val} />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="buy" stroke="#8884d8" name="ราคาซื้อ" />
+          <Line type="monotone" dataKey="sell" stroke="#82ca9d" name="ราคาขาย" />
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
 }
+
 
