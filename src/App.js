@@ -20,12 +20,15 @@ export default function App() {
 
   const handleAdd = async () => {
     const { name, buy, sell } = form;
-    if (!name || !buy || !sell) return alert('กรุณากรอกข้อมูลให้ครบ');
+    if (!name || !buy || !sell) {
+      alert('กรุณากรอกข้อมูลให้ครบ');
+      return;
+    }
     try {
       await addDoc(collection(db, 'materials'), {
         name,
         buy: parseFloat(buy),
-        sell: parseFloat(sell)
+        sell: parseFloat(sell),
       });
       setForm({ name: '', buy: '', sell: '' });
       fetchMaterials();
@@ -45,8 +48,10 @@ export default function App() {
         form={form}
         setForm={setForm}
         handleAdd={handleAdd}
+        fetchMaterials={fetchMaterials}
       />
     </div>
   );
 }
+
 
