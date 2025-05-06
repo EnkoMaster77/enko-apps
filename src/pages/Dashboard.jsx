@@ -1,8 +1,8 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-import SummaryCards from '../components/SummaryCards';
-import MaterialForm from '../components/MaterialForm';
-import MaterialTable from '../components/MaterialTable';
+import SummaryCards from '../component/SummaryCards';
+import MaterialForm from '../component/MaterialForm';
+import MaterialTable from '../component/MaterialTable';
 
 export default function Dashboard({ materials, form, setForm, handleAdd, fetchMaterials }) {
   return (
