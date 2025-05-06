@@ -1,9 +1,7 @@
 // src/firebase.js
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-
-// ตั้งค่า Firebase ของคุณ
 const firebaseConfig = {
   apiKey: "AIzaSyCqu2HlWOn2YN_Ow8mSA-_sXGE6OI507Sc",
   authDomain: "enko-app-ecdb0.firebaseapp.com",
@@ -14,7 +12,6 @@ const firebaseConfig = {
   measurementId: "G-HCYBP2JY2N"
 };
 
-// เริ่มต้น Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
