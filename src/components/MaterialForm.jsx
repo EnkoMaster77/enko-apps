@@ -1,39 +1,44 @@
-
 // src/components/MaterialForm.jsx
 import React from 'react';
 
 export default function MaterialForm({ form, setForm, handleAdd }) {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
-    <div className="bg-white p-4 rounded shadow border">
-      <h2 className="text-lg font-bold mb-4">➕ เพิ่มข้อมูลวัสดุ</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-        <input
-          className="border p-2 rounded"
-          placeholder="ชื่อวัสดุ"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="ราคาซื้อ"
-          type="number"
-          value={form.buy}
-          onChange={(e) => setForm({ ...form, buy: e.target.value })}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="ราคาขาย"
-          type="number"
-          value={form.sell}
-          onChange={(e) => setForm({ ...form, sell: e.target.value })}
-        />
-      </div>
+    <div className="grid grid-cols-3 gap-2">
+      <input
+        name="name"
+        value={form.name}
+        onChange={handleChange}
+        placeholder="ชื่อวัสดุ"
+        className="border p-2 rounded"
+      />
+      <input
+        name="buy"
+        value={form.buy}
+        onChange={handleChange}
+        placeholder="ราคาซื้อ"
+        type="number"
+        className="border p-2 rounded"
+      />
+      <input
+        name="sell"
+        value={form.sell}
+        onChange={handleChange}
+        placeholder="ราคาขาย"
+        type="number"
+        className="border p-2 rounded"
+      />
       <button
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
         onClick={handleAdd}
+        className="col-span-3 bg-blue-600 text-white py-2 rounded mt-2"
       >
-        บันทึกข้อมูล
+        ➕ เพิ่มข้อมูล
       </button>
     </div>
   );
 }
+
