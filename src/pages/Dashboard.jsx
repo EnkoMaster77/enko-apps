@@ -59,21 +59,24 @@ export default function Dashboard() {
       <CategoryFilter selected={selectedCategory} setSelected={setSelectedCategory} />
       <MaterialForm onAddSuccess={() => window.location.reload()} />
 
-      {/* Top 5 */}
-      <Card className="mb-4">
-        <CardContent>
-          <h2 className="text-xl font-semibold mb-2">🏆 TOP 5 วัสดุกำไรสูงสุด</h2>
-          {top5.length === 0 ? (
-            <p className="text-sm text-gray-500">ยังไม่มีวัสดุที่มีกำไร</p>
-          ) : (
-            <ul className="space-y-1">
-              {top5.map((m, i) => (
-                <li key={i} className="flex justify-between">
-                  <span>{i + 1}. {m.name}</span>
-                  <span className="text-green-600 font-semibold">+{m.profit.toLocaleString()}฿</span>
-                </li>
-              ))}
-            </ul>
+      <ul className="space-y-1">
+  {top5.map((m, i) => (
+    <li key={i} className="flex justify-between items-center">
+      <span>{i + 1}. {m.name}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-green-600 font-semibold">
+          +{m.profit.toLocaleString()}฿
+        </span>
+        <button
+          onClick={() => handleDelete(m.id, m.name)}
+          className="text-red-500 text-sm"
+        >
+          🗑
+        </button>
+      </div>
+    </li>
+  ))}
+</ul>
           )}
         </CardContent>
       </Card>
