@@ -5,6 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import MaterialForm from "@/components/MaterialForm";
+import { doc, deleteDoc } from "firebase/firestore";
 
 export default function Dashboard() {
   const [materials, setMaterials] = useState([]);
