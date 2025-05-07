@@ -43,6 +43,7 @@ export default function Dashboard() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">📊 ENKO Dashboard</h1>
       <CategoryFilter selected={selectedCategory} setSelected={setSelectedCategory} />
+      <MaterialForm onAddSuccess={() => window.location.reload()} />
 
       {/* Top 5 */}
       <Card className="mb-4">
