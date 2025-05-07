@@ -39,6 +39,19 @@ export default function Dashboard() {
     { date: "04/05", price: 113 },
     { date: "05/05", price: 120 },
   ]; // ← Mock สำหรับกราฟ (ต่อไปจะดึงจาก Firestore ได้)
+  
+  const handleDelete = async (id, name) => {
+  const confirmDelete = window.confirm(`ยืนยันลบ "${name}" หรือไม่?`);
+  if (!confirmDelete) return;
+
+  try {
+    await deleteDoc(doc(db, "materials", id));
+    setMaterials((prev) => prev.filter((m) => m.id !== id));
+  } catch (err) {
+    console.error("ลบไม่สำเร็จ:", err);
+    alert("เกิดข้อผิดพลาดขณะลบ");
+  }
+};
 
   return (
     <div className="p-6">
