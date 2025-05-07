@@ -1,38 +1,106 @@
-// src/pages/DashboardLayout.jsx
-import React from 'react';
-import SummaryCards from '../components/SummaryCards';
-import MaterialForm from '../components/MaterialForm';
-import MaterialTable from '../components/MaterialTable';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import CategoryFilter from "@/components/CategoryFilter";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebase";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function DashboardLayout({ materials, form, setForm, handleAdd, fetchMaterials }) {
+export default function DashboardLayout() {
+  const [materials, setMaterials] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("ทั้งหมด");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const colRef = collection(db, "materials");
+      const snapshot = await getDocs(colRef);
+      const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setMaterials(items);
+    };
+    fetchData();
+  }, []);
+
+  const filteredMaterials = materials.filter(
+    (m) => selectedCategory === "ทั้งหมด" || m.category === selectedCategory
+  );
+
+  const top5 = [...filteredMaterials]
+    .filter((m) => m.profit > 0)
+    .sort((a, b) => b.profit - a.profit)
+    .slice(0, 5);
+
+  const lossList = filteredMaterials.filter((m) => m.profit < 0 || m.risk);
+
+  const priceTrends = [
+    { date: "01/05", price: 110 },
+    { date: "02/05", price: 115 },
+    { date: "03/05", price: 117 },
+    { date: "04/05", price: 113 },
+    { date: "05/05", price: 120 },
+  ]; // <- คุณจะเชื่อมกับ data จริงได้ภายหลัง
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white px-6 py-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <header className="text-center">
-          <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400">ENKO Dashboard</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">ระบบวิเคราะห์วัสดุรีไซเคิลแบบเรียลไทม์</p>
-        </header>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">📊 ENKO Dashboard</h1>
+      <CategoryFilter selected={selectedCategory} setSelected={setSelectedCategory} />
 
-        {/* สรุปรายการแบบ Card */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SummaryCards materials={materials} />
-        </section>
+      {/* Top 5 วัสดุกำไรสูงสุด */}
+      <Card className="mb-4">
+        <CardContent>
+          <h2 className="text-xl font-semibold mb-2">🏆 TOP 5 วัสดุกำไรสูงสุด</h2>
+          {top5.length === 0 ? (
+            <p className="text-sm text-gray-500">ยังไม่มีวัสดุที่มีกำไร</p>
+          ) : (
+            <ul className="space-y-1">
+              {top5.map((m, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{i + 1}. {m.name}</span>
+                  <span className="text-green-600 font-semibold">+{m.profit.toLocaleString()}฿</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
 
-        {/* ฟอร์มเพิ่มข้อมูล */}
-        <section className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-4">เพิ่มวัสดุใหม่</h2>
-          <MaterialForm form={form} setForm={setForm} handleAdd={handleAdd} />
-        </section>
+      {/* แจ้งเตือนวัสดุขาดทุน/เสี่ยง */}
+      <Card className="mb-4">
+        <CardContent>
+          <h2 className="text-xl font-semibold mb-2">⚠️ วัสดุขาดทุนหรือเสี่ยง</h2>
+          {lossList.length === 0 ? (
+            <p className="text-sm text-gray-500">ไม่มีรายการที่ต้องระวัง</p>
+          ) : (
+            <ul className="space-y-1">
+              {lossList.map((m, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{m.name}</span>
+                  <span className="text-red-500 font-medium">
+                    {m.profit < 0 ? `${m.profit.toLocaleString()}฿` : "ขายยาก"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
 
-        {/* ตารางวัสดุ */}
-        <section className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-4">ตารางข้อมูลวัสดุ</h2>
-          <MaterialTable materials={materials} fetchMaterials={fetchMaterials} />
-        </section>
-      </div>
+      {/* กราฟราคาย้อนหลัง */}
+      <Card>
+        <CardContent>
+          <h2 className="text-xl font-semibold mb-4">📈 กราฟราคาย้อนหลัง (Mock)</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={priceTrends}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="price" stroke="#3b82f6" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
 
 
 
