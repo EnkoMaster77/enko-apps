@@ -4,6 +4,7 @@ import CategoryFilter from "@/components/CategoryFilter";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import MaterialForm from "@/components/MaterialForm";
 
 export default function Dashboard() {
   const [materials, setMaterials] = useState([]);
