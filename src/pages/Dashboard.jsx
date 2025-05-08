@@ -66,7 +66,13 @@ const isOverdue = (createdAt) => {
   const value = !isNaN(weight) && !isNaN(profit) ? weight * profit : 0;
   return sum + value;
 }, 0);
-
+const trendData = [
+  { date: "01/05", copper: 110, aluminum: 95 },
+  { date: "02/05", copper: 113, aluminum: 92 },
+  { date: "03/05", copper: 115, aluminum: 90 },
+  { date: "04/05", copper: 112, aluminum: 89 },
+  { date: "05/05", copper: 117, aluminum: 91 },
+];
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-2">📊 ENKO Dashboard</h1>
