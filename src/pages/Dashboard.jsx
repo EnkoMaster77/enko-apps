@@ -6,8 +6,7 @@ import { db } from "@/firebase";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import MaterialForm from "@/components/MaterialForm";
 import { sendTelegramMessage } from "@/utils/telegram";
-import { doc, deleteDoc } from "firebase/firestore";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 
 export default function Dashboard() {
   const [materials, setMaterials] = useState([]);
