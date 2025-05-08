@@ -35,6 +35,7 @@ const defaultForm = {
       ...form,
       profit: parseFloat(form.profit),
       weight: parseFloat(form.weight),
+      createdAt: new Date().toISOString(), // ✅ ตรงนี้สำคัญ
     };
     await addDoc(collection(db, "materials"), newMaterial);
     setForm(defaultForm);
