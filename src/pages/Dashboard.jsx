@@ -36,7 +36,9 @@ const isOverdue = (createdAt) => {
     .sort((a, b) => b.profit - a.profit)
     .slice(0, 5);
 
-  const lossList = filteredMaterials.filter((m) => m.profit < 0 || m.risk);
+ const lossList = filteredMaterials.filter((m) => {
+  return m.profit < 0 || m.risk || isOverdue(m.createdAt);
+});
 
   const priceTrends = [
     { date: "01/05", price: 110 },
