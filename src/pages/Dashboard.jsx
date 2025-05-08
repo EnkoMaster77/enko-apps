@@ -149,6 +149,20 @@ const trendData = [
           </ResponsiveContainer>
         </CardContent>
       </Card>
+        <Card className="mt-6">
+  <CardContent>
+    <h2 className="text-xl font-semibold mb-4">📉 เปรียบเทียบราคาวัสดุ</h2>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={trendData}>
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="copper" stroke="#f97316" strokeWidth={2} name="ทองแดง" />
+        <Line type="monotone" dataKey="aluminum" stroke="#3b82f6" strokeWidth={2} name="อลูมิเนียม" />
+      </LineChart>
+    </ResponsiveContainer>
+  </CardContent>
+</Card>
     </div>
   );
 }
