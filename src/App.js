@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import DashboardLayout from './pages/DashboardLayout';
+<Route path="/dashboard" element={<Dashboard />} />
 
 export default function App() {
   // State สำหรับเก็บวัสดุ และฟอร์ม input
