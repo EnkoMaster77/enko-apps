@@ -85,6 +85,15 @@ const isOverdue = (createdAt) => {
         <span className="text-green-600 font-semibold">
           +{m.profit.toLocaleString()}฿
         </span>
+        <span className="text-red-500 font-medium">
+  {m.profit < 0
+    ? `${m.profit.toLocaleString()}฿`
+    : m.risk
+    ? "ขายยาก"
+    : isOverdue(m.createdAt)
+    ? "ค้างเกิน 14 วัน"
+    : ""}
+</span>
         <button
           onClick={() => handleDelete(m.id, m.name)}
           className="text-red-500 text-sm"
