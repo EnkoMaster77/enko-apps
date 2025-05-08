@@ -55,11 +55,16 @@ export default function Dashboard() {
   const totalValue = materials.reduce((sum, m) => {
   const weight = parseFloat(m.weight);
   const profit = parseFloat(m.profit);
-  return sum + (weight && profit ? weight * profit : 0);
+  const value = !isNaN(weight) && !isNaN(profit) ? weight * profit : 0;
+  return sum + value;
 }, 0);
 
   return (
     <div className="p-6">
+      <h1 className="text-2xl font-bold mb-2">📊 ENKO Dashboard</h1>
+<p className="text-md text-gray-700 dark:text-gray-300 mb-4">
+  📦 รวมมูลค่าวัสดุในคลัง: <span className="font-semibold text-blue-600">{totalValue.toLocaleString()}฿</span>
+</p>
       <h1 className="text-2xl font-bold mb-4">📊 ENKO Dashboard</h1>
       <CategoryFilter selected={selectedCategory} setSelected={setSelectedCategory} />
       <MaterialForm onAddSuccess={() => window.location.reload()} />
