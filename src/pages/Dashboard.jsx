@@ -20,7 +20,13 @@ export default function Dashboard() {
     };
     fetchData();
   }, []);
-
+const isOverdue = (createdAt) => {
+  if (!createdAt) return false;
+  const now = new Date();
+  const created = new Date(createdAt);
+  const diffDays = (now - created) / (1000 * 60 * 60 * 24);
+  return diffDays > 14;
+};
   const filteredMaterials = materials.filter(
     (m) => selectedCategory === "ทั้งหมด" || m.category === selectedCategory
   );
