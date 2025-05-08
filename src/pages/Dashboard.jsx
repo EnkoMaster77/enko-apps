@@ -52,6 +52,11 @@ export default function Dashboard() {
     alert("เกิดข้อผิดพลาดขณะลบ");
   }
 };
+  const totalValue = materials.reduce((sum, m) => {
+  const weight = parseFloat(m.weight);
+  const profit = parseFloat(m.profit);
+  return sum + (weight && profit ? weight * profit : 0);
+}, 0);
 
   return (
     <div className="p-6">
