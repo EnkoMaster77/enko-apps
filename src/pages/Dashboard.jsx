@@ -133,6 +133,12 @@ const trendData = [
         >
           🗑
         </button>
+        <button
+  onClick={() => handleSell(m)}
+  className="text-yellow-600 text-sm mr-2"
+>
+  💸 ขายออก
+</button>
       </div>
     </li>
   ))}
