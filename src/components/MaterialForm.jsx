@@ -20,7 +20,13 @@ export default function MaterialForm({ onAddSuccess }) {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
+const defaultForm = {
+  name: "",
+  category: "โลหะ",
+  profit: "",
+  weight: "",
+  risk: false,
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -92,7 +98,16 @@ export default function MaterialForm({ onAddSuccess }) {
         />
         <label>วัสดุนี้ขายยาก / เสี่ยง</label>
       </div>
-
+<div>
+  <label className="block text-sm font-medium">น้ำหนักคงเหลือ (กก.)</label>
+  <input
+    type="number"
+    name="weight"
+    value={form.weight}
+    onChange={handleChange}
+    className="w-full mt-1 p-2 border rounded"
+  />
+</div>
       <button
         type="submit"
         disabled={loading}
