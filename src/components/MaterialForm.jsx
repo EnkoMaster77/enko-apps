@@ -28,23 +28,25 @@ const defaultForm = {
   risk: false,
 };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const newMaterial = {
-        ...form,
-        profit: parseFloat(form.profit),
-      };
-      await addDoc(collection(db, "materials"), newMaterial);
-      setForm(defaultForm);
-      onAddSuccess(); // reload dashboard
-    } catch (err) {
-      console.error("เกิดข้อผิดพลาด:", err);
-      alert("บันทึกไม่สำเร็จ");
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const newMaterial = {
+      ...form,
+      profit: parseFloat(form.profit),
+      weight: parseFloat(form.weight),
+    };
+    await addDoc(collection(db, "materials"), newMaterial);
+    setForm(defaultForm);
+    onAddSuccess(); // reload dashboard
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาด:", err);
+    alert("บันทึกไม่สำเร็จ");
+  } finally {
+    setLoading(false);
+  }
+};
+      
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mb-6 bg-white dark:bg-zinc-800 p-4 rounded-xl shadow">
