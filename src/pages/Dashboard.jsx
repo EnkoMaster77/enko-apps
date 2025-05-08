@@ -6,6 +6,7 @@ import { db } from "@/firebase";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import MaterialForm from "@/components/MaterialForm";
 import { doc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function Dashboard() {
   const [materials, setMaterials] = useState([]);
@@ -26,6 +27,32 @@ const isOverdue = (createdAt) => {
   const created = new Date(createdAt);
   const diffDays = (now - created) / (1000 * 60 * 60 * 24);
   return diffDays > 14;
+};
+  const handleSell = async (material) => {
+  const amount = prompt(`กรอกน้ำหนัก (กก.) ที่ขายออกจาก "${material.name}"`);
+  const sellWeight = parseFloat(amount);
+
+  if (isNaN(sellWeight) || sellWeight <= 0) {
+    alert("กรุณากรอกตัวเลขที่ถูกต้อง");
+    return;
+  }
+
+  const currentWeight = parseFloat(material.weight);
+  const newWeight = Math.max(currentWeight - sellWeight, 0);
+
+  try {
+    const matRef = doc(db, "materials", material.id);
+    await updateDoc(matRef, { weight: newWeight });
+    setMaterials((prev) =>
+      prev.map((m) =>
+        m.id === material.id ? { ...m, weight: newWeight } : m
+      )
+    );
+    alert(`ขาย "${material.name}" ออกแล้ว ${sellWeight} กก.`);
+  } catch (err) {
+    console.error("ขายไม่สำเร็จ:", err);
+    alert("เกิดข้อผิดพลาดขณะอัปเดตสต็อก");
+  }
 };
   const filteredMaterials = materials.filter(
     (m) => selectedCategory === "ทั้งหมด" || m.category === selectedCategory
