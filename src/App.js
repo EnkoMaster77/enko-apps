@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+// src/App.js
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from './firebase';
-<Route path="/dashboard" element={<Dashboard />} />
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
-  // State สำหรับเก็บวัสดุ และฟอร์ม input
   const [materials, setMaterials] = useState([]);
   const [form, setForm] = useState({ name: '', buy: '', sell: '' });
 
@@ -15,14 +16,13 @@ export default function App() {
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setMaterials(data);
     } catch (error) {
-      console.error('⚠️ Error fetching materials:', error);
+      console.error('⚠️ ไม่สามารถดึงข้อมูลได้:', error);
     }
   };
 
-  // เพิ่มข้อมูลเข้า Firestore
+  // เพิ่มข้อมูลใหม่เข้า Firestore
   const handleAdd = async () => {
     const { name, buy, sell } = form;
-
     if (!name || !buy || !sell) {
       alert('❗ กรุณากรอกข้อมูลให้ครบ');
       return;
@@ -34,29 +34,35 @@ export default function App() {
         buy: parseFloat(buy),
         sell: parseFloat(sell),
       });
-
       setForm({ name: '', buy: '', sell: '' });
-      fetchMaterials();
+      fetchMaterials(); // อัปเดตข้อมูลใหม่
     } catch (error) {
-      console.error('⚠️ Error adding material:', error);
+      console.error('❌ เพิ่มข้อมูลล้มเหลว:', error);
     }
   };
 
-  // โหลดข้อมูลเมื่อแอปเริ่ม
+  // โหลดข้อมูลครั้งแรกเมื่อเปิดหน้าเว็บ
   useEffect(() => {
     fetchMaterials();
   }, []);
 
   return (
-    <DashboardLayout
-      materials={materials}
-      form={form}
-      setForm={setForm}
-      handleAdd={handleAdd}
-      fetchMaterials={fetchMaterials}
-    />
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Dashboard
+              materials={materials}
+              form={form}
+              setForm={setForm}
+              handleAdd={handleAdd}
+              fetchMaterials={fetchMaterials}
+            />
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
-
-
 
