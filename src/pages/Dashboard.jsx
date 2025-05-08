@@ -135,6 +135,12 @@ const trendData = [
           🗑
         </button>
         <button
+  onClick={() => sendTelegramMessage("🧾 สรุปรายงานจาก ENKO\n- กำไรรวม: 25,000฿\n- คงเหลือ: 800 กก.")}
+  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+>
+  📤 ส่งสรุปเข้า Telegram
+</button>
+        <button
   onClick={() => handleSell(m)}
   className="text-yellow-600 text-sm mr-2"
 >
